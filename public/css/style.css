@@ -1,0 +1,132 @@
+/* ============================================================
+   Sylent AI — Base Theme
+   Dark, modern, Claude-inspired design system
+   ============================================================ */
+
+:root {
+  --bg: #1b1b1b;
+  --surface: #232323;
+  --card: #2b2b2b;
+  --card-hover: #333333;
+  --primary: #c96442;
+  --primary-dim: rgba(201, 100, 66, 0.15);
+  --primary-glow: rgba(201, 100, 66, 0.35);
+  --accent: #8fa876;
+  --accent-dim: rgba(143, 168, 118, 0.15);
+  --accent-glow: rgba(143, 168, 118, 0.35);
+  --text: #ececec;
+  --text-dim: #a8a8a8;
+  --text-faint: #737373;
+  --border: rgba(255, 255, 255, 0.08);
+  --border-strong: rgba(255, 255, 255, 0.14);
+  --danger: #e0716c;
+  --danger-dim: rgba(224, 113, 108, 0.15);
+  --radius-sm: 10px;
+  --radius-md: 16px;
+  --radius-lg: 22px;
+  --radius-xl: 28px;
+  --shadow-1: 0 4px 24px rgba(0, 0, 0, 0.35);
+  --shadow-2: 0 8px 40px rgba(0, 0, 0, 0.5);
+  --ease: cubic-bezier(0.4, 0, 0.2, 1);
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  scroll-behavior: smooth;
+}
+
+::selection { background: var(--primary-glow); color: #fff; }
+
+a { color: inherit; text-decoration: none; }
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+  color: inherit;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.22); }
+
+/* Shared components */
+.icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-sm);
+  color: var(--text-dim);
+  transition: background 0.2s var(--ease), color 0.2s var(--ease);
+}
+.icon-btn:hover { background: var(--card-hover); color: var(--text); }
+
+.brand { display: flex; align-items: center; gap: 10px; }
+.brand-logo {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, var(--primary), #a8532f);
+  color: #fdf6f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 16px;
+  box-shadow: 0 0 0 1px var(--border-strong), 0 4px 14px var(--primary-glow);
+}
+.brand-name { font-weight: 700; font-size: 16px; letter-spacing: -0.01em; }
+
+/* Generic page shell used by profile/docs pages */
+.page-shell {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 28px;
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  background: rgba(27, 27, 27, 0.85);
+  backdrop-filter: blur(10px);
+  z-index: 10;
+}
+.back-link {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--text-dim);
+  font-size: 14px;
+  font-weight: 500;
+  padding: 8px 14px;
+  border-radius: var(--radius-sm);
+  transition: background 0.2s var(--ease), color 0.2s var(--ease);
+}
+.back-link:hover { background: var(--card); color: var(--text); }
+
+@media (max-width: 640px) {
+  .page-header { padding: 14px 16px; }
+  .brand-name { display: none; }
+}
