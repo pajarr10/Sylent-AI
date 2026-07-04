@@ -1,1 +1,163 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Panel — Sylent AI</title>
+<link rel="icon" type="image/svg+xml" href="/icons/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="admin.css">
+</head>
+<body>
 
+<!-- ============== LOGIN SCREEN ============== -->
+<div id="loginScreen" class="login-screen">
+  <div class="login-bg-glow"></div>
+  <div class="login-card">
+    <div class="login-logo">S</div>
+    <h1>Admin Panel</h1>
+    <p class="login-subtitle">Masuk untuk mengelola Sylent AI</p>
+
+    <form id="loginForm" class="login-form" autocomplete="off">
+      <label class="login-field">
+        <span>Admin Key</span>
+        <input type="password" id="adminKeyInput" placeholder="Masukkan admin key" autocomplete="current-password" required>
+      </label>
+
+      <div id="loginError" class="login-error hidden"></div>
+
+      <button type="submit" class="login-btn" id="loginBtn">
+        <span class="login-btn-label">Login</span>
+        <span class="login-spinner hidden"></span>
+      </button>
+    </form>
+
+    <p class="login-footnote">Akses terbatas untuk pengelola Sylent AI.</p>
+  </div>
+</div>
+
+<!-- ============== DASHBOARD ============== -->
+<div id="dashboard" class="dashboard hidden">
+  <aside class="admin-sidebar">
+    <div class="admin-brand">
+      <div class="brand-logo">S</div>
+      <span>Sylent Admin</span>
+    </div>
+    <nav class="admin-nav">
+      <button class="admin-nav-btn active" data-tab="overview">
+        <svg viewBox="0 0 24 24" width="15" height="15"><path fill="currentColor" d="M4 13h6V4H4zm0 7h6v-5H4zm8 0h8V11h-8zm0-16v5h8V4z"/></svg>
+        Overview
+      </button>
+      <button class="admin-nav-btn" data-tab="users">
+        <svg viewBox="0 0 24 24" width="15" height="15"><path fill="currentColor" d="M16 11c1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3 1.34 3 3 3zM8 11c1.66 0 3-1.34 3-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+        Users
+      </button>
+      <button class="admin-nav-btn" data-tab="chats">
+        <svg viewBox="0 0 24 24" width="15" height="15"><path fill="currentColor" d="M4 4h16v12H5.17L4 17.17zm0-2c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>
+        Chat Logs
+      </button>
+      <button class="admin-nav-btn" data-tab="pages">
+        <svg viewBox="0 0 24 24" width="15" height="15"><path fill="currentColor" d="M6 2h9l5 5v15H6zm8 1.5V8h4.5z"/></svg>
+        Halaman Aktif
+      </button>
+    </nav>
+    <div class="admin-sidebar-bottom">
+      <div class="admin-status">
+        <span class="status-dot online"></span>
+        <span>Auto-refresh 5 detik</span>
+      </div>
+      <button class="logout-btn" id="logoutBtn">
+        <svg viewBox="0 0 24 24" width="15" height="15"><path fill="currentColor" d="M16 17v-3H9v-4h7V7l5 5zM14 2a2 2 0 012 2v2h-2V4H5v16h9v-2h2v2a2 2 0 01-2 2H5a2 2 0 01-2-2V4a2 2 0 012-2z"/></svg>
+        Logout
+      </button>
+    </div>
+  </aside>
+
+  <main class="admin-main">
+    <header class="admin-topbar">
+      <button class="mobile-nav-btn" id="mobileNavBtn">
+        <svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+      </button>
+      <h1 id="tabTitle">Overview</h1>
+      <div class="admin-topbar-actions">
+        <button class="admin-btn danger" id="clearLogsBtn">Hapus Log</button>
+      </div>
+    </header>
+
+    <!-- OVERVIEW TAB -->
+    <section id="tab-overview" class="admin-tab">
+      <div class="stat-grid">
+        <div class="stat-card"><span class="stat-label">User Online</span><span class="stat-value" id="statOnline">0</span></div>
+        <div class="stat-card"><span class="stat-label">Total Visitor</span><span class="stat-value" id="statVisitor">0</span></div>
+        <div class="stat-card"><span class="stat-label">Total Request AI</span><span class="stat-value" id="statAiRequest">0</span></div>
+        <div class="stat-card"><span class="stat-label">Total Chat</span><span class="stat-value" id="statChat">0</span></div>
+        <div class="stat-card"><span class="stat-label">IP Unik</span><span class="stat-value" id="statUniqueIp">0</span></div>
+      </div>
+
+      <div class="panel">
+        <h2>Halaman Aktif</h2>
+        <div id="activePagesList" class="active-pages-list"></div>
+      </div>
+    </section>
+
+    <!-- USERS TAB -->
+    <section id="tab-users" class="admin-tab hidden">
+      <div class="filters-bar">
+        <input type="text" id="searchUser" placeholder="Cari IP / User ID...">
+        <input type="text" id="filterBrowser" placeholder="Filter Browser...">
+        <input type="text" id="filterDevice" placeholder="Filter Device...">
+        <input type="text" id="filterCountry" placeholder="Filter Negara...">
+        <input type="text" id="filterPage" placeholder="Filter Halaman...">
+        <button class="admin-btn" id="applyFilterBtn">Terapkan</button>
+      </div>
+      <div class="table-actions">
+        <button class="admin-btn" id="exportJsonBtn">Export JSON</button>
+        <button class="admin-btn" id="exportCsvBtn">Export CSV</button>
+      </div>
+      <div class="table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Status</th><th>IP</th><th>Browser</th><th>OS</th><th>Device</th>
+              <th>Negara</th><th>Halaman</th><th>Terakhir Aktif</th><th></th>
+            </tr>
+          </thead>
+          <tbody id="usersTableBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- CHATS TAB -->
+    <section id="tab-chats" class="admin-tab hidden">
+      <div class="table-wrap">
+        <div id="chatLogsList" class="chat-logs-list"></div>
+      </div>
+    </section>
+
+    <!-- PAGES TAB -->
+    <section id="tab-pages" class="admin-tab hidden">
+      <div class="panel">
+        <h2>Distribusi Halaman Aktif</h2>
+        <div id="pagesDistribution" class="active-pages-list"></div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<div class="admin-sidebar-overlay" id="adminSidebarOverlay"></div>
+
+<!-- User Detail Modal -->
+<div id="userDetailModal" class="admin-modal">
+  <div class="admin-modal-inner">
+    <div class="admin-modal-header">
+      <h2>Detail User</h2>
+      <button id="closeUserDetailBtn" class="admin-btn">Tutup</button>
+    </div>
+    <div id="userDetailBody" class="admin-modal-body"></div>
+  </div>
+</div>
+
+<script src="admin.js"></script>
+</body>
+</html>
