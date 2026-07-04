@@ -1,1 +1,156 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Sylent AI — Chat dengan Sylent 0.1</title>
+<meta name="description" content="Sylent AI, asisten AI modern bertenaga Sylent 0.1.">
+<link rel="icon" type="image/svg+xml" href="/icons/favicon.svg">
 
+<!-- Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<!-- Highlight.js theme -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+
+<!-- Styles -->
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/css/chat.css">
+<link rel="stylesheet" href="/css/preview.css">
+</head>
+<body>
+
+<div class="app-shell">
+
+  <!-- ============== SIDEBAR ============== -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-top">
+      <div class="brand">
+        <div class="brand-logo">S</div>
+        <span class="brand-name">Sylent AI</span>
+      </div>
+      <button class="icon-btn sidebar-collapse-btn" id="collapseSidebarBtn" title="Tutup sidebar">
+        <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+      </button>
+    </div>
+
+    <button class="new-chat-btn" id="newChatBtn">
+      <svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      Chat baru
+    </button>
+
+    <div class="sidebar-section-label">Riwayat</div>
+    <div class="chat-list" id="chatList"><!-- chat items injected --></div>
+
+    <div class="sidebar-bottom">
+      <a class="sidebar-link" href="/docs">
+        <svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M6 2h9l5 5v15H6zm8 1.5V8h4.5z"/></svg>
+        Dokumentasi
+      </a>
+      <a class="sidebar-link" href="/profile">
+        <svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M12 12a5 5 0 100-10 5 5 0 000 10zm0 2c-4.4 0-8 2.2-8 5v2h16v-2c0-2.8-3.6-5-8-5z"/></svg>
+        Profil
+      </a>
+    </div>
+  </aside>
+
+  <!-- ============== MAIN ============== -->
+  <main class="main-view">
+    <header class="topbar">
+      <button class="icon-btn mobile-menu-btn" id="openSidebarBtn" title="Buka menu">
+        <svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+      </button>
+      <div class="model-badge">
+        <span class="model-dot"></span>
+        Sylent 0.1
+      </div>
+      <div class="topbar-actions">
+        <a href="/profile" class="avatar-link" title="Profil">P</a>
+      </div>
+    </header>
+
+    <section class="chat-area" id="chatArea">
+      <div class="welcome-screen" id="welcomeScreen">
+        <div class="welcome-logo">S</div>
+        <h1>Halo, saya <span>Sylent AI</span></h1>
+        <p>Ditenagai model <strong>Sylent 0.1</strong>. Tanyakan apa saja — dari kode, tulisan, hingga ide kreatif.</p>
+        <div class="suggestion-grid">
+          <button class="suggestion-card" data-prompt="Buatkan landing page HTML CSS JS sederhana untuk toko online">
+            <strong>Buatkan landing page</strong>
+            <span>HTML, CSS, dan JS sederhana</span>
+          </button>
+          <button class="suggestion-card" data-prompt="Jelaskan apa itu closure di JavaScript dengan contoh kode">
+            <strong>Jelaskan closure JS</strong>
+            <span>Lengkap dengan contoh kode</span>
+          </button>
+          <button class="suggestion-card" data-prompt="Buatkan animasi loading spinner menggunakan CSS">
+            <strong>Buat animasi CSS</strong>
+            <span>Loading spinner modern</span>
+          </button>
+          <button class="suggestion-card" data-prompt="Berikan tips produktivitas untuk developer">
+            <strong>Tips produktivitas</strong>
+            <span>Untuk developer sehari-hari</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="messages" id="messages"></div>
+    </section>
+
+    <footer class="composer-wrap">
+      <div class="attachment-tray hidden" id="attachmentTray"></div>
+      <div class="composer" id="composer">
+        <input type="file" id="fileInput" accept="image/*,.pdf,.txt,.md,.json,.csv,.doc,.docx" multiple hidden>
+        <button class="composer-btn attach-btn" id="attachBtn" title="Lampirkan foto atau file">
+          <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M16.5 6v11.5a4 4 0 01-8 0V5a2.5 2.5 0 015 0v10.5a1 1 0 01-2 0V6H10v9.5a2.5 2.5 0 005 0V5a4 4 0 00-8 0v12.5a5.5 5.5 0 0011 0V6z"/></svg>
+        </button>
+        <textarea id="promptInput" class="composer-input" placeholder="Kirim pesan ke Sylent AI…" rows="1"></textarea>
+        <div class="composer-actions">
+          <button class="composer-btn stop-btn hidden" id="stopBtn" title="Stop generate">
+            <svg viewBox="0 0 24 24" width="16" height="16"><rect x="6" y="6" width="12" height="12" rx="2" fill="currentColor"/></svg>
+          </button>
+          <button class="composer-btn send-btn" id="sendBtn" title="Kirim (Enter)">
+            <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M4 12l16-8-6 8 6 8z"/></svg>
+          </button>
+        </div>
+      </div>
+      <div class="composer-hint">Enter untuk kirim &nbsp;•&nbsp; Shift+Enter untuk baris baru &nbsp;•&nbsp; Sylent AI dapat membuat kesalahan.</div>
+    </footer>
+  </main>
+</div>
+
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<!-- Preview Modal -->
+<div class="preview-modal" id="previewModal">
+  <div class="preview-modal-inner" id="previewModalInner">
+    <div class="preview-toolbar">
+      <span class="preview-title">Live Preview</span>
+      <div class="preview-toolbar-actions">
+        <button class="icon-btn" id="previewRefreshBtn" title="Refresh"><svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M17.65 6.35A8 8 0 106.35 17.65 8 8 0 0017.65 6.35zM12 6v3l4-4-4-4v3a8 8 0 100 16v-2a6 6 0 116-6z" transform="translate(0)"/></svg></button>
+        <button class="icon-btn" id="previewOpenTabBtn" title="Open new tab"><svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M14 3v2h3.6l-9.8 9.8 1.4 1.4L19 6.4V10h2V3zM5 5h6V3H3v18h18v-8h-2v6H5z"/></svg></button>
+        <button class="icon-btn" id="previewDownloadBtn" title="Download"><svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M5 20h14v-2H5zM12 2v12l4-4 1.4 1.4L12 18 6.6 11.4 8 10l4 4z"/></svg></button>
+        <button class="icon-btn" id="previewFullscreenBtn" title="Fullscreen"><svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M4 4h6v2H6v4H4zm10 0h6v6h-2V6h-4zM4 14h2v4h4v2H4zm14 0h2v6h-6v-2h4z"/></svg></button>
+        <button class="icon-btn" id="previewCloseBtn" title="Tutup"><svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+      </div>
+    </div>
+    <iframe id="previewFrame" class="preview-frame" sandbox="allow-scripts allow-modals allow-popups allow-forms"></iframe>
+  </div>
+</div>
+
+<!-- CDN Libraries -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.6/purify.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.2/marked.min.js"></script>
+<!-- App scripts -->
+<script src="/js/tracking.js"></script>
+<script src="/js/markdown.js"></script>
+<script src="/js/preview.js"></script>
+<script src="/js/sidebar.js"></script>
+<script src="/js/attachments.js"></script>
+<script src="/js/chat.js"></script>
+<script src="/js/app.js"></script>
+</body>
+</html>

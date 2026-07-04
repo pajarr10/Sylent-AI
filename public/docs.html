@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dokumentasi — Sylent AI</title>
+<link rel="icon" type="image/svg+xml" href="/icons/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/css/docs.css">
+</head>
+<body>
+<div class="page-shell">
+  <header class="page-header">
+    <a href="/" class="back-link">
+      <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M15 4l-8 8 8 8 1.4-1.4L9.8 12l6.6-6.6z"/></svg>
+      Kembali ke Chat
+    </a>
+    <div class="brand">
+      <div class="brand-logo">S</div>
+      <span class="brand-name">Sylent AI</span>
+    </div>
+  </header>
+
+  <main class="docs-main">
+    <aside class="docs-nav">
+      <a href="#pengenalan" class="docs-nav-link active">Pengenalan</a>
+      <a href="#fitur-chat" class="docs-nav-link">Fitur Chat</a>
+      <a href="#markdown" class="docs-nav-link">Markdown &amp; Kode</a>
+      <a href="#preview" class="docs-nav-link">Live Preview</a>
+      <a href="#model" class="docs-nav-link">Model</a>
+      <a href="#privasi" class="docs-nav-link">Privasi &amp; Keamanan</a>
+    </aside>
+
+    <article class="docs-content">
+      <section id="pengenalan">
+        <h1>Dokumentasi Sylent AI</h1>
+        <p><strong>Sylent AI</strong> adalah aplikasi chat AI modern yang terinspirasi dari antarmuka Claude, dibangun dengan stack ringan: HTML, CSS, Vanilla JavaScript di sisi frontend, dan Node.js + Express + Upstash Redis di sisi backend — semuanya dalam satu project.</p>
+      </section>
+
+      <section id="fitur-chat">
+        <h2>Fitur Chat</h2>
+        <ul>
+          <li>Chat baru &amp; riwayat percakapan di sidebar</li>
+          <li>Rename dan hapus chat</li>
+          <li>Render Markdown lengkap dengan syntax highlighting</li>
+          <li>Tombol copy kode dan copy respons</li>
+          <li>Auto scroll saat respons masuk</li>
+          <li>Indikator loading &amp; efek typing</li>
+          <li>Regenerate dan stop generate</li>
+          <li>Enter untuk kirim, Shift+Enter untuk baris baru</li>
+        </ul>
+      </section>
+
+      <section id="markdown">
+        <h2>Markdown &amp; Kode</h2>
+        <p>Semua respons Sylent AI dirender menggunakan Markdown renderer dan disanitasi dengan DOMPurify sebelum ditampilkan, sehingga aman dari serangan XSS. Blok kode otomatis mendapat syntax highlighting via Highlight.js.</p>
+        <pre><code>function haloDunia() {
+  console.log("Halo dari Sylent AI!");
+}</code></pre>
+      </section>
+
+      <section id="preview">
+        <h2>Live Preview</h2>
+        <p>Jika Sylent AI menghasilkan kode HTML, SVG, CSS, atau JavaScript, tombol <strong>Preview</strong> akan muncul otomatis di bawah blok kode. Preview dijalankan dalam iframe ter-sandbox, lengkap dengan opsi Fullscreen, Refresh, Open in New Tab, dan Download.</p>
+      </section>
+
+      <section id="model">
+        <h2>Model</h2>
+        <p>Sylent AI saat ini hanya menyediakan satu model: <strong>Sylent 0.1</strong> — dioptimalkan untuk percakapan umum, pembuatan kode, dan bantuan produktivitas sehari-hari.</p>
+      </section>
+
+      <section id="privasi">
+        <h2>Privasi &amp; Keamanan</h2>
+        <p>Backend menggunakan Helmet, Content Security Policy, rate limiting, dan validasi input untuk menjaga keamanan layanan. Kunci admin disimpan di Redis dan tidak pernah dikirim ke frontend.</p>
+      </section>
+    </article>
+  </main>
+</div>
+<script src="/js/tracking.js"></script>
+</body>
+</html>
