@@ -11,7 +11,6 @@
  */
 import { Router } from 'express';
 import { validatePrompt, sanitizeText } from '../middleware/security.js';
-import { chat as callClaude } from '../lib/claude.js';
 import {
   appendChatLog,
   incrAiRequest,
@@ -26,6 +25,7 @@ import {
 } from '../database/redis.js';
 
 const router = Router();
+const AI_API_BASE = process.env.AI_API_BASE || 'https://api.synoxcloud.xyz/ai-chat/claude-opus-4.8';
 
 // Strips emoji / pictograph characters from upstream AI replies so the UI
 // (chat, admin chat logs, exports) never surfaces them.
@@ -48,21 +48,21 @@ function resolveConversationId(raw) {
   return value || DEFAULT_CONVERSATION_ID;
 }
 
-/**
- * Calls the upstream AI model (via lib/claude.js) with a raw prompt and
- * returns the cleaned reply text. `sessionKey` isolates the model's own
- * short rolling memory per user+conversation so different users never share
- * history — the richer context (summary + trimmed history) is still built
- * and owned entirely by this file, same as before.
- */
-async function callUpstream(prompt, sessionKey) {
-  const result = await callClaude(prompt, sessionKey);
+/** Calls the upstream text-only AI API with a raw prompt and returns the cleaned reply text. */
+async function callUpstream(prompt) {
+  const upstreamUrl = `${AI_API_BASE}?pesan=${encodeURIComponent(prompt)}`;
+  const upstreamRes = await fetch(upstreamUrl);
 
-  if (!result.status) {
-    throw new Error(`Upstream responded with ${result.code || 'an error'}`);
+  if (!upstreamRes.ok) {
+    throw new Error(`Upstream responded with ${upstreamRes.status}`);
   }
 
-  return result.answer;
+  const data = await upstreamRes.json().catch(async () => {
+    const txt = await upstreamRes.text();
+    return { result: txt };
+  });
+
+  return data.result || data.message || data.answer || data.response || data.data || JSON.stringify(data);
 }
 
 /**
@@ -72,7 +72,7 @@ async function callUpstream(prompt, sessionKey) {
  * to a plain-text summary if the upstream summarization call fails, so
  * memory never silently breaks.
  */
-async function maybeSummarizeConversation(userId, conversationId, sessionKey) {
+async function maybeSummarizeConversation(userId, conversationId) {
   const messages = await getConversationMessages(userId, conversationId);
   if (messages.length <= RAW_MESSAGE_LIMIT) return;
 
@@ -94,7 +94,7 @@ async function maybeSummarizeConversation(userId, conversationId, sessionKey) {
       `\n\nPercakapan yang perlu diringkas:\n${transcript}` +
       `\n\nTulis hanya ringkasannya saja, tanpa kalimat pembuka atau penutup.`;
 
-    const rawSummary = await callUpstream(summarizePrompt, `${sessionKey}:summary`);
+    const rawSummary = await callUpstream(summarizePrompt);
     newSummary = stripEmoji(rawSummary).slice(0, 2000);
   } catch (err) {
     console.warn('[AI Route] Summarization upstream call failed, using fallback:', err.message);
@@ -159,10 +159,6 @@ router.get('/claude', validatePrompt, async (req, res) => {
   const attachmentNote = sanitizeText(req.query.attachments || '', 500);
   const promptForModel = attachmentNote ? `${prompt}\n\n[Lampiran: ${attachmentNote}]` : prompt;
 
-  // Isolates this user+conversation's rolling memory inside lib/claude.js
-  // from every other user/conversation.
-  const sessionKey = `${req.userId}:${conversationId}`;
-
   try {
     // On regenerate, drop the previous (user, assistant) pair for this exact
     // prompt from memory first so the stale answer doesn't leak into context
@@ -172,7 +168,7 @@ router.get('/claude', validatePrompt, async (req, res) => {
     }
 
     // Keep the context window bounded before building this turn's prompt.
-    await maybeSummarizeConversation(req.userId, conversationId, sessionKey);
+    await maybeSummarizeConversation(req.userId, conversationId);
 
     const [summary, recentMessages] = await Promise.all([
       getConversationSummary(req.userId, conversationId),
@@ -180,7 +176,7 @@ router.get('/claude', validatePrompt, async (req, res) => {
     ]);
 
     const contextualPrompt = buildContextualPrompt(summary, recentMessages, promptForModel);
-    const rawReply = await callUpstream(contextualPrompt, sessionKey);
+    const rawReply = await callUpstream(contextualPrompt);
     const reply = stripEmoji(rawReply);
 
     await incrAiRequest();
